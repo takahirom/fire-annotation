@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-group 'com.github.takahirom.fireannotation'
-version '1.0-SNAPSHOT'
+group = 'com.github.takahirom.fireannotation'
+version = '0.0.1'
+
+apply plugin: 'com.jfrog.bintray'
+
 
 apply plugin: 'groovy'
 apply plugin: 'java'
@@ -53,13 +56,24 @@ dependencies {
     archives "org.apache.maven.wagon:wagon-ssh-external:2.2"
 }
 
-uploadArchives {
-    repositories.mavenDeployer {
-        configuration = configurations.archives
-        pom.project {
-            name 'FireAnnotation plugin'
-            packaging 'aar'
-            description ''
-        }
+def siteUrl = 'https://github.com/takahirom/fire-annotation'
+def gitUrl = 'https://github.com/takahirom/fire-annotation.git'
+
+bintray {
+    user = "takahirom"
+    if (file("../key").exists()) {
+        key = file("../key").text
+    }
+    configurations = ['archives'] //When uploading configuration files
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = 'Simple tool which help you to implement Firebase Analytics'
+        websiteUrl = siteUrl
+        issueTrackerUrl = 'https://github.com/takahirom/fire-annotation/issues'
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        labels = ['aar', 'android', 'library']
+        publicDownloadNumbers = true
     }
 }

@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
+
+group = 'com.github.takahirom.fireannotation'
+version = '0.1.0'
+
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+
 
 android {
     compileSdkVersion 25
@@ -36,6 +42,32 @@ android {
         }
     }
 }
+
+
+def siteUrl = 'https://github.com/takahirom/fire-annotation'
+def gitUrl = 'https://github.com/takahirom/fire-annotation.git'
+
+bintray {
+    user = "takahirom"
+    if (file("../key").exists()) {
+        key = file("../key").text
+    }
+
+    configurations = ['archives'] //When uploading configuration files
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = 'Simple tool which help you to implement Firebase Analytics'
+        websiteUrl = siteUrl
+        issueTrackerUrl = 'https://github.com/takahirom/fire-annotation/issues'
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        labels = ['aar', 'android', 'library']
+        publicDownloadNumbers = true
+    }
+}
+
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

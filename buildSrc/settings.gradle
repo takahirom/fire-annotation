@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-include ':plugin'
-project(':plugin').projectDir = new File('../plugin')
+include ':fireannotation-plugin'
+project(':fireannotation-plugin').projectDir = new File('../fireannotation-plugin')
