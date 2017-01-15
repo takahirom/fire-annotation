@@ -92,7 +92,31 @@ class ButtonColorCustomValueCreator extends CustomValueCreator<MainActivity> {
 
 
 # Download
-Comming soon..
+
+Please add classpath to your project level build gradle.(`project/build.gradle`)
+
+
+
+```groovy
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.0'
+
+        classpath 'com.github.takahirom.fireannotation.plugin:fireannotation-plugin:0.1.0'
+    }
+}
+```
+
+Please add plugin to your module level build gradle.(`project/app/build.gradle`)
+
+```
+apply plugin: 'com.android.application'
+apply plugin: 'com.github.takahirom.fireannotation'
+```
+
 
 # License
 

@@ -30,5 +30,5 @@ repositories {
 }
 
 dependencies {
-    compile project(':fireannotation-plugin')
+//    compile project(':fireannotation-plugin')
 }
