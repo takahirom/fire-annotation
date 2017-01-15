@@ -15,10 +15,8 @@
  */
 
 
-group = 'com.github.takahirom.fireannotation'
-version = '0.1.0'
-
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 
@@ -47,25 +45,6 @@ android {
 def siteUrl = 'https://github.com/takahirom/fire-annotation'
 def gitUrl = 'https://github.com/takahirom/fire-annotation.git'
 
-bintray {
-    user = "takahirom"
-    if (file("../key").exists()) {
-        key = file("../key").text
-    }
-
-    configurations = ['archives'] //When uploading configuration files
-    pkg {
-        repo = 'maven'
-        name = project.name
-        desc = 'Simple tool which help you to implement Firebase Analytics'
-        websiteUrl = siteUrl
-        issueTrackerUrl = 'https://github.com/takahirom/fire-annotation/issues'
-        vcsUrl = gitUrl
-        licenses = ['Apache-2.0']
-        labels = ['aar', 'android', 'library']
-        publicDownloadNumbers = true
-    }
-}
 
 
 
@@ -86,14 +65,47 @@ task sourcesJar(type: Jar) {
 
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath +=project.files(android.getBootClasspath().join(File.pathSeparator))
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
+
 artifacts {
     archives javadocJar
     archives sourcesJar
+}
+
+group = 'com.github.takahirom.fireannotation.library'
+version = '0..2'
+
+def versionName = version
+
+bintray {
+    user = "takahirom"
+    if (file("../key").exists()) {
+        key = file("../key").text
+    }
+
+    configurations = ['archives'] //When uploading configuration files
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = 'Simple tool which help you to implement Firebase Analytics'
+        websiteUrl = siteUrl
+        issueTrackerUrl = 'https://github.com/takahirom/fire-annotation/issues'
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        labels = ['aar', 'android', 'library']
+        publicDownloadNumbers = true
+        publish = true
+        version {
+            name = versionName //version
+            desc = 'Simple tool which help you to implement Firebase Analytics' //Description
+            released = new Date()
+            vcsTag = versionName
+        }
+    }
 }

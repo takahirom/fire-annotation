@@ -22,6 +22,8 @@ import com.android.build.gradle.LibraryPlugin
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.DependencyResolutionListener
+import org.gradle.api.artifacts.ResolvableDependencies
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -44,7 +46,19 @@ class FirePlugin implements Plugin<Project> {
             throw new GradleException('FirePlugin gradle plugin only supports android gradle plugin 2.0.0 or later')
         }
 
-        project.android.registerTransform(new AnnotationTransformer(project))
+
+        def compileDeps = project.getConfigurations().getByName("compile").getDependencies()
+        project.getGradle().addListener(new DependencyResolutionListener() {
+            @Override
+            void beforeResolve(ResolvableDependencies resolvableDependencies) {
+                project.android.registerTransform(new AnnotationTransformer(project))
+                compileDeps.add(project.getDependencies().create("com.github.takahirom.fireannotation.library:fireannotation-library:0.1.0"))
+                project.getGradle().removeListener(this)
+            }
+
+            @Override
+            void afterResolve(ResolvableDependencies resolvableDependencies) {}
+        })
     }
 
     private static boolean isTransformAvailable() {

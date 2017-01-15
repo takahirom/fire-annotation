@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-group = 'com.github.takahirom.fireannotation'
-version = '0.0.1'
+group = 'com.github.takahirom.fireannotation.plugin'
+version = '0.1.0'
 
-apply plugin: 'com.jfrog.bintray'
-
+def versionName = version
 
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: "maven-publish"
+
+apply plugin: 'com.jfrog.bintray'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -44,6 +46,15 @@ sourceSets {
             srcDir 'build/generated-src/main/java'
         }
     }
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 dependencies {
@@ -75,5 +86,22 @@ bintray {
         licenses = ['Apache-2.0']
         labels = ['aar', 'android', 'library']
         publicDownloadNumbers = true
+        version {
+            name = versionName //version
+            desc = 'Simple tool which help you to implement Firebase Analytics' //Description
+            released = new Date()
+            vcsTag = versionName
+        }
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            groupId group
+            artifactId project.name
+            version versionName
+        }
     }
 }
