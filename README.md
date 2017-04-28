@@ -51,9 +51,10 @@ private void buy() {
 
 # Advanced usage
 
-## Use parameter value
+## Using parameter value.
 
-You can use format by parameter.
+You can use format by parameter.   
+You can use this feature not only @FireUserProperty, but also @FireEventLog.
 
 ```
 @FireUserProperty(property = "is_activated:%s")
