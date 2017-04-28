@@ -51,6 +51,18 @@ private void buy() {
 
 # Advanced usage
 
+## Use parameter value
+
+You can use format by parameter.
+
+```
+@FireUserProperty(property = "is_activated:%s")
+private void applyButtonColor(boolean isActivated) {
+    final String color = getButtonColor();
+    button.setBackgroundColor(Color.parseColor(color));
+}
+```
+
 ## Custom value
 
 You can use `customProperty` for `@FireUserProperty`. And `customParameter` for `FireEventLog`
