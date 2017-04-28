@@ -56,7 +56,7 @@ private void buy() {
 You can use format by parameter.   
 You can use this feature not only @FireUserProperty, but also @FireEventLog.
 
-```
+```java
 @FireUserProperty(property = "is_activated:%s")
 private void applyButtonColor(boolean isActivated) {
     final String color = getButtonColor();
