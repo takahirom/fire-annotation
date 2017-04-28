@@ -35,27 +35,34 @@ public class UserPropertyInserter {
             AnnotationUtil.hasAnnotation(method, FIRE_LOG_ANNOTION_FQDN)
         }.each { method ->
             logger.warn(" * User Property Insert " + method.longName)
-            // get data form annotation
-            def annotation = AnnotationUtil.getAnnotation(method, FIRE_LOG_ANNOTION_FQDN)
-            def paramAnnotationProperty = annotation.getMemberValue("property")
-            def customParamAnnotationProperty = annotation.getMemberValue("customProperty")
 
-            String thisStatement = getOuterThis(clazz)
-
-            LinkedHashMap<String, Object> templateValueMap = buildTemplateValueMap(thisStatement, paramAnnotationProperty, customParamAnnotationProperty)
-
-            def template = '''\
-${custom_value_creator}
-com.github.takahirom.fireannotation.internal.FirebaseInvoker.sendUserProperty("${param_annotation_property}",creator, ${this_statement});
-'''
-            def engine = new SimpleTemplateEngine()
-            String text = engine.createTemplate(template).make(templateValueMap)
+            String text = generateInsertText(method)
 
             println(text)
 
             method.insertAfter(text)
 
         }
+    }
+
+    protected static String generateInsertText(CtMethod method) {
+        CtClass clazz = method.getDeclaringClass()
+// get data form annotation
+        def annotation = AnnotationUtil.getAnnotation(method, FIRE_LOG_ANNOTION_FQDN)
+        def paramAnnotationProperty = annotation.getMemberValue("property")
+        def customParamAnnotationProperty = annotation.getMemberValue("customProperty")
+
+        String thisStatement = getOuterThis(clazz)
+
+        LinkedHashMap<String, Object> templateValueMap = buildTemplateValueMap(thisStatement, paramAnnotationProperty, customParamAnnotationProperty)
+
+        def template = '''\
+${custom_value_creator}
+com.github.takahirom.fireannotation.internal.FirebaseInvoker.sendUserProperty("${param_annotation_property}", ${creator_variable}, ${this_statement}, \\$args);
+'''
+        def engine = new SimpleTemplateEngine()
+        String text = engine.createTemplate(template).make(templateValueMap)
+        text
     }
 
     private
@@ -70,12 +77,14 @@ com.github.takahirom.fireannotation.internal.FirebaseInvoker.sendUserProperty("$
         }
 
         if (customParamAnnotationProperty == null) {
-            templateValueMap["custom_value_creator"] = "com.github.takahirom.fireannotation.CustomValueCreator creator = null;"
+            templateValueMap["custom_value_creator"] = "";
+            templateValueMap["creator_variable"] = "null";
         } else {
             def engine = new SimpleTemplateEngine()
             templateValueMap["custom_value_creator"] = engine.createTemplate(
-                    'com.github.takahirom.fireannotation.CustomValueCreator creator = new $custom_param_annotation_property();')
-                    .make([custom_param_annotation_property: customParamAnnotationProperty.value,])
+                    'com.github.takahirom.fireannotation.CustomValueCreator creator = new $custom_param_annotation_parameter();')
+                    .make([custom_param_annotation_parameter: customParamAnnotationProperty.value,])
+            templateValueMap["creator_variable"] = "creator";
         }
         templateValueMap
     }

@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 
 import com.github.takahirom.fireannotation.annotation.FireEventLog;
 import com.github.takahirom.fireannotation.annotation.FireUserProperty;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
@@ -41,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         button = (ImageButton) findViewById(R.id.color_button);
         initRemoteConfig();
-        // do not wait remoteconfig fetch end
-        applyButtonColor();
+        applyButtonColor(FirebaseRemoteConfig.getInstance().activateFetched());
 
         button.setOnClickListener(new View.OnClickListener() {
             @FireEventLog(event = FirebaseAnalytics.Event.SELECT_CONTENT, parameter = "open:web,url:google")
@@ -63,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
         firebaseRemoteConfig.activateFetched();
     }
 
-    @FireEventLog(event = FirebaseAnalytics.Event.VIEW_ITEM, parameter = "open:web,url:google")
-    @FireUserProperty(customProperty = ButtonColorCustomValueCreator.class)
-    private void applyButtonColor() {
+    @FireEventLog(event = FirebaseAnalytics.Event.VIEW_ITEM, parameter = "open:web,url:google,applyRemoteConfig:%s")
+    @FireUserProperty(property = "remoteconfigfetched:%s", customProperty = ButtonColorCustomValueCreator.class)
+    private void applyButtonColor(boolean applyRemoteConfig) {
         final String color = getButtonColor();
         button.setBackgroundColor(Color.parseColor(color));
     }
@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(true)
+
                 .build();
         firebaseRemoteConfig.setConfigSettings(configSettings);
         firebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
@@ -86,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
         if (firebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
             cacheExpiration = 0;
         }
-        firebaseRemoteConfig.fetch(cacheExpiration);
+        firebaseRemoteConfig.fetch(cacheExpiration).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                firebaseRemoteConfig.activateFetched();
+                applyButtonColor(FirebaseRemoteConfig.getInstance().activateFetched());
+            }
+        });
     }
 }

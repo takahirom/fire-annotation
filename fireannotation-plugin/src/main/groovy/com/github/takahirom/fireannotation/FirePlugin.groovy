@@ -52,7 +52,7 @@ class FirePlugin implements Plugin<Project> {
             @Override
             void beforeResolve(ResolvableDependencies resolvableDependencies) {
                 project.android.registerTransform(new AnnotationTransformer(project))
-                compileDeps.add(project.getDependencies().create("com.github.takahirom.fireannotation.library:fireannotation-library:0.1.0"))
+                compileDeps.add(project.getDependencies().create("com.github.takahirom.fireannotation.library:fireannotation-library:0.2.0"))
                 project.getGradle().removeListener(this)
             }
 

@@ -106,7 +106,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:2.2.0'
         classpath 'com.google.gms:google-services:3.0.0'
 
-        classpath 'com.github.takahirom.fireannotation.plugin:fireannotation-plugin:0.1.0'
+        classpath 'com.github.takahirom.fireannotation.plugin:fireannotation-plugin:0.2.0'
     }
 }
 ```

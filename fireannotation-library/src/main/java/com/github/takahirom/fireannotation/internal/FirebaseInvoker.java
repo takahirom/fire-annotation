@@ -27,8 +27,13 @@ import java.util.Map;
 import java.util.Set;
 
 public class FirebaseInvoker {
-    @SuppressWarnings({"unchecked", "unused"})
+    @SuppressWarnings({"unused"})
     public static void sendEventLog(String event, String parameters, CustomValueCreator creator, Object thiz) {
+        sendEventLog(event, parameters, creator, thiz, new Object[]{});
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static void sendEventLog(String event, String parameters, CustomValueCreator creator, Object thiz, Object[] methodParameters) {
         Bundle fireParameter = new Bundle();
         if (creator != null) {
             Map<String, String> customParameter = creator.getValue(thiz);
@@ -40,6 +45,7 @@ public class FirebaseInvoker {
             }
         }
 
+        parameters = String.format(parameters, methodParameters);
         String[] splitParameters = parameters.split(",");
         for (String splitParameter : splitParameters) {
             String[] split = splitParameter.split(":");
@@ -53,8 +59,13 @@ public class FirebaseInvoker {
         FirebaseAnalytics.getInstance(FirebaseApp.getInstance().getApplicationContext()).logEvent(event, fireParameter);
     }
 
-    @SuppressWarnings({"unchecked", "unused"})
+    @SuppressWarnings({"unused"})
     public static void sendUserProperty(String properties, CustomValueCreator creator, Object thiz) {
+        sendUserProperty(properties, creator, thiz, new Object[]{});
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static void sendUserProperty(String properties, CustomValueCreator creator, Object thiz, Object[] methodParameters) {
         FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(FirebaseApp.getInstance().getApplicationContext());
         if (creator != null) {
             Map<String, String> customParameter = creator.getValue(thiz);
@@ -66,6 +77,7 @@ public class FirebaseInvoker {
             }
         }
 
+        properties = String.format(properties, methodParameters);
         String[] splitParameters = properties.split(",");
         for (String splitParameter : splitParameters) {
             String[] split = splitParameter.split(":");

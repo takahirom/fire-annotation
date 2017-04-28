@@ -21,7 +21,7 @@ import java.util.Map;
 public abstract class CustomValueCreator<T> {
     /**
      *
-     * @param annotatedObject
+     * @param annotatedObject caller class instance
      * @return Map for log
      */
     public abstract Map<String, String> getValue(T annotatedObject);

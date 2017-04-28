@@ -22,7 +22,7 @@ apply plugin: 'com.jfrog.bintray'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         minSdkVersion 8
@@ -79,7 +79,7 @@ artifacts {
 }
 
 group = 'com.github.takahirom.fireannotation.library'
-version = '0..2'
+version = '0.2.0'
 
 def versionName = version
 

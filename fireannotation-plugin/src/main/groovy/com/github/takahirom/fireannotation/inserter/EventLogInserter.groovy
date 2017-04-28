@@ -25,8 +25,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 public class EventLogInserter {
-    public static final String FIRE_LOG_ANNOTION_FQDN                \
-           = "com.github.takahirom.fireannotation.annotation.FireEventLog"
+    public static final String FIRE_LOG_ANNOTION_FQDN                      \
+                 = "com.github.takahirom.fireannotation.annotation.FireEventLog"
 
     public static final Logger logger = LoggerFactory.getLogger('fire-plugin-transform-firelog')
 
@@ -35,22 +35,8 @@ public class EventLogInserter {
             AnnotationUtil.hasAnnotation(method, FIRE_LOG_ANNOTION_FQDN)
         }.each { method ->
             logger.warn(" * Event Log Insert " + method.longName)
-            // get data form annotation
-            def annotation = AnnotationUtil.getAnnotation(method, FIRE_LOG_ANNOTION_FQDN)
-            def eventAnnotationParameter = annotation.getMemberValue("event")
-            def paramAnnotationParameter = annotation.getMemberValue("parameter")
-            def customParamAnnotationParameter = annotation.getMemberValue("customParameter")
 
-            String thisStatement = getOuterThis(clazz)
-
-            LinkedHashMap<String, Object> templateValueMap = buildTemplateValueMap(thisStatement, eventAnnotationParameter, paramAnnotationParameter, customParamAnnotationParameter)
-
-            def template = '''\
-${custom_value_creator}
-com.github.takahirom.fireannotation.internal.FirebaseInvoker.sendEventLog(${event_annotation_parameter},"${param_annotation_parameter}",creator, ${this_statement});
-'''
-            def engine = new SimpleTemplateEngine()
-            String text = engine.createTemplate(template).make(templateValueMap)
+            String text = generateInsertText(method)
 
             println(text)
 
@@ -58,6 +44,29 @@ com.github.takahirom.fireannotation.internal.FirebaseInvoker.sendEventLog(${even
 
         }
     }
+
+    public static String generateInsertText(CtMethod method) {
+        CtClass clazz = method.getDeclaringClass()
+
+        // get data form annotation
+        def annotation = AnnotationUtil.getAnnotation(method, FIRE_LOG_ANNOTION_FQDN)
+        def eventAnnotationParameter = annotation.getMemberValue("event")
+        def paramAnnotationParameter = annotation.getMemberValue("parameter")
+        def customParamAnnotationParameter = annotation.getMemberValue("customParameter")
+
+        String thisStatement = getOuterThis(clazz)
+
+        LinkedHashMap<String, Object> templateValueMap = buildTemplateValueMap(thisStatement, eventAnnotationParameter, paramAnnotationParameter, customParamAnnotationParameter)
+
+        def template = '''\
+${custom_value_creator}
+com.github.takahirom.fireannotation.internal.FirebaseInvoker.sendEventLog(${event_annotation_parameter},"${param_annotation_parameter}", ${creator_variable}, ${this_statement}, \\$args);
+'''
+        def engine = new SimpleTemplateEngine()
+        String text = engine.createTemplate(template).make(templateValueMap)
+        text
+    }
+
 
     private
     static LinkedHashMap<String, Object> buildTemplateValueMap(String thisStatement, MemberValue eventAnnotationParameter, MemberValue paramAnnotationParameter, MemberValue customParamAnnotationParameter) {
@@ -72,12 +81,14 @@ com.github.takahirom.fireannotation.internal.FirebaseInvoker.sendEventLog(${even
         }
 
         if (customParamAnnotationParameter == null) {
-            templateValueMap["custom_value_creator"] = "com.github.takahirom.fireannotation.CustomValueCreator creator = null;"
+            templateValueMap["custom_value_creator"] = "";
+            templateValueMap["creator_variable"] = "null";
         } else {
             def engine = new SimpleTemplateEngine()
             templateValueMap["custom_value_creator"] = engine.createTemplate(
                     'com.github.takahirom.fireannotation.CustomValueCreator creator = new $custom_param_annotation_parameter();')
                     .make([custom_param_annotation_parameter: customParamAnnotationParameter.value,])
+            templateValueMap["creator_variable"] = "creator";
         }
         templateValueMap
     }
