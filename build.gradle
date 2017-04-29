@@ -27,7 +27,7 @@ buildscript {
         // publish
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
-        classpath 'com.github.takahirom.fireannotation.plugin:fireannotation-plugin:0.1.0'
+        classpath 'com.github.takahirom.fireannotation.plugin:fireannotation-plugin:0.2.0'
     }
 }
 plugins {

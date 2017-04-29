@@ -63,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
         firebaseRemoteConfig.activateFetched();
     }
 
-    @FireEventLog(event = FirebaseAnalytics.Event.VIEW_ITEM, parameter = "open:web,url:google,applyRemoteConfig:%s")
-    @FireUserProperty(property = "remoteconfigfetched:%s", customProperty = ButtonColorCustomValueCreator.class)
-    private void applyButtonColor(boolean applyRemoteConfig) {
+    @FireEventLog(event = FirebaseAnalytics.Event.VIEW_ITEM, parameter = "open:web,url:google,remoteConfigFetched:%s")
+    @FireUserProperty(property = "remote_config_fetched:%s", customProperty = ButtonColorCustomValueCreator.class)
+    private void applyButtonColor(boolean remoteConfigFetched) {
         final String color = getButtonColor();
         button.setBackgroundColor(Color.parseColor(color));
     }
@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         firebaseRemoteConfig.fetch(cacheExpiration).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                firebaseRemoteConfig.activateFetched();
                 applyButtonColor(FirebaseRemoteConfig.getInstance().activateFetched());
             }
         });
