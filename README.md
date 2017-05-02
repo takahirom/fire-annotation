@@ -51,9 +51,9 @@ private void buy() {
 
 # Advanced usage
 
-## Using parameter value.
+## Using method parameter value.
 
-You can use format by parameter.   
+You can use format by method parameter for sending property or parameter.   
 You can use this feature not only @FireUserProperty, but also @FireEventLog.
 
 ```java
