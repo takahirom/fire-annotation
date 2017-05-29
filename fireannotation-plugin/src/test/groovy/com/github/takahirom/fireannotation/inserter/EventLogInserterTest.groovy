@@ -40,6 +40,12 @@ class EventLogInserterTest extends GroovyTestCase {
         assertInsertText(EXPECTED_ALL_CONTAINS, createAnnotation("eventName", "testParameter", "java.lang.Object.class"), "public void test(java.lang.String parameter){}")
     }
 
+    void testStaticMethod() {
+          String exptected = "com.github.takahirom.fireannotation.CustomValueCreator creator = new java.lang.Object.class();\n" +
+            "com.github.takahirom.fireannotation.internal.FirebaseInvoker.sendEventLog(\"eventName\",\"testParameter\",creator, null, \$args);\n"
+        assertInsertText(exptected, createAnnotation("eventName", "testParameter", "java.lang.Object.class"), "public static void test(java.lang.String parameter){}")
+    }
+
     void testNoCreatorMethod() {
         final String noCreatorExpected = "com.github.takahirom.fireannotation.internal.FirebaseInvoker.sendEventLog(\"eventName\",\"testParameter\" ,null, this, \$args);\n"
         assertInsertText(noCreatorExpected, createAnnotation("eventName", "testParameter", null), "public void test(java.lang.String parameter){}")

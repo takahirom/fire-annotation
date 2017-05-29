@@ -70,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
         button.setBackgroundColor(Color.parseColor(color));
     }
 
+    @FireEventLog(event = FirebaseAnalytics.Event.VIEW_ITEM, parameter = "open:web,url:google,remoteConfigFetched:%s")
+    @FireUserProperty(property = "remote_config_fetched:%s", customProperty = ButtonColorCustomValueCreator.class)
+    public static void staticMethod(boolean remoteConfigFetched) {
+    }
+
     public String getButtonColor() {
         return firebaseRemoteConfig.getString(BUTTON_COLOR_KEY);
     }

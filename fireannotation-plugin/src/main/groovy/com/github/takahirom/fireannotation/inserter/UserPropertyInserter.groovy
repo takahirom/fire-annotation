@@ -24,6 +24,8 @@ import javassist.bytecode.annotation.MemberValue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.lang.reflect.Modifier
+
 public class UserPropertyInserter {
     public static final String FIRE_LOG_ANNOTION_FQDN                 \
             = "com.github.takahirom.fireannotation.annotation.FireUserProperty"
@@ -52,7 +54,12 @@ public class UserPropertyInserter {
         def paramAnnotationProperty = annotation.getMemberValue("property")
         def customParamAnnotationProperty = annotation.getMemberValue("customProperty")
 
-        String thisStatement = getOuterThis(clazz)
+        String thisStatement
+        if(!Modifier.isStatic(method.getModifiers())){
+            thisStatement = getOuterThis(clazz)
+        }else{
+            thisStatement = "null"
+        }
 
         LinkedHashMap<String, Object> templateValueMap = buildTemplateValueMap(thisStatement, paramAnnotationProperty, customParamAnnotationProperty)
 

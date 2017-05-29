@@ -15,7 +15,7 @@
  */
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.github.takahirom.fireannotation'
+//apply plugin: 'com.github.takahirom.fireannotation'
 
 android {
     compileSdkVersion 25

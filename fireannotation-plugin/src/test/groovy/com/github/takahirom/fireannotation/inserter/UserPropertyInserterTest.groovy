@@ -39,6 +39,13 @@ class UserPropertyInserterTest extends GroovyTestCase {
         assertInsertText(EXPECTED_ALL_CONTAINS, createAnnotation("testParameter", "java.lang.Object.class"), "public void test(java.lang.String parameter){}")
     }
 
+    void testStaticParameterMethod() {
+        assertInsertText("com.github.takahirom.fireannotation.CustomValueCreator creator = new java.lang.Object.class();\n" +
+            "com.github.takahirom.fireannotation.internal.FirebaseInvoker.sendUserProperty(\"testParameter\",creator, null, \$args);\n"
+                ,
+                createAnnotation("testParameter", "java.lang.Object.class"), "public static void test(java.lang.String parameter){}")
+    }
+
     void testNoCreatorMethod() {
         final String noCreatorExpected = "com.github.takahirom.fireannotation.internal.FirebaseInvoker.sendUserProperty(\"testParameter\" ,null, this, \$args);\n"
         assertInsertText(noCreatorExpected, createAnnotation("testParameter", null), "public void test(java.lang.String parameter){}")
